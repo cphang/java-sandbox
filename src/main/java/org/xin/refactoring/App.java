@@ -13,7 +13,7 @@ public class App {
 
   protected static final String ME = "Me";
 
-  protected enum Type {
+  public enum Type {
     FOO, BAR
   }
 
