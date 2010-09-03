@@ -21,15 +21,9 @@ public class UserCacheTest {
   }
 
   @Test
-  public void ShouldReturnUserIfIdIsGiven() {
+  public void shouldReturnUserIfIdIsGiven() {
     User user = cache.findById("0");
     assertEquals("0", user.getId());
     assertEquals("John", user.getName());
-  }
-
-  @Test
-  public void ShouldReturnUserIfIdIsGiven2() {
-    User user = cache.findById("0");
-
   }
 }
