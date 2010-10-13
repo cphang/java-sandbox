@@ -8,8 +8,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
@@ -17,6 +15,7 @@ import java.util.Properties;
 public class PropertiesLoaderTest {
 
   private final static Logger log = LoggerFactory.getLogger(PropertiesLoaderTest.class);
+  private final PropertyLoader loader = new PropertyLoaderImpl();
 
   @Test
   public void shouldReadUserHomePath() {
@@ -27,22 +26,27 @@ public class PropertiesLoaderTest {
   @Test
   public void shouldLoadPropertyFileOutsideWarArchieve()
       throws FileNotFoundException, IOException {
-    final String userCurrentPath = System.getProperty("user.dir");
-    log.info("user.home: " + userCurrentPath);
 
-    final String fileToLoad = "test.properties";
-    final String absolutePath = userCurrentPath
-        + System.getProperty("file.separator") + fileToLoad;
-    final File file = new File(absolutePath);
-    assertNotNull("can not load " + fileToLoad, file);
-
-    final Properties properties = new Properties();
-    properties.load(new FileInputStream(file));
+    final Properties properties = loader.loadProperty();
 
     final int size = properties.size();
-    assertTrue(size == 2);
+    assertTrue(size > 0);
 
-    final String property = properties.getProperty("key0");
-    assertEquals(property, "value0");
+    final String property = properties.getProperty("key2");
+    assertEquals(property, "value2");
+
+    log.info("value: " + property);
+  }
+
+  @Test
+  public void shouldStorePropertyFileOutsideWarArchive()
+      throws FileNotFoundException, IOException {
+    final Properties properties = loader.loadProperty();
+
+    properties.setProperty("key3", "value3");
+
+    loader.store(properties);
+    loader.loadProperty();
+    assertTrue(loader.get("key2").equals("value2"));
   }
 }
