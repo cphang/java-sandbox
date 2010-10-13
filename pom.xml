@@ -9,11 +9,6 @@
 
 	<name>refactoring</name>
 	<url>http://maven.apache.org</url>
-	<!--
-		scm> <connection>scm:svn:http://127.0.0.1/svn/my-project</connection>
-		<developerConnection>scm:svn:https://127.0.0.1/svn/my-project</developerConnection>
-		<tag>HEAD</tag> </scm
-	-->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<build.version>${project.version}-r${buildNumber}</build.version>
@@ -25,8 +20,6 @@
 			<version>4.8.1</version>
 			<scope>test</scope>
 		</dependency>
-		<!-- LOGGING DEPENDENCIES - LOG4J -->
-
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
@@ -37,7 +30,6 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.14</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
@@ -48,7 +40,44 @@
 			<artifactId>mockito-all</artifactId>
 			<version>1.8.5</version>
 		</dependency>
+		<dependency>
+			<groupId>net.java.dev.jna</groupId>
+			<artifactId>jna</artifactId>
+			<version>3.2.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.restlet.jse</groupId>
+			<artifactId>org.restlet.ext.simple</artifactId>
+			<version>2.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-websocket</artifactId>
+			<version>8.0.0.M1</version>
+		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>sun-repo-2</id>
+			<url>http://download.java.net/maven/2/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+		</repository>
+	</repositories>
 	<build>
 		<resources>
 			<resource>
@@ -89,20 +118,10 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
-			<!--
-				<plugin> <groupId>org.codehaus.mojo</groupId>
-				<artifactId>buildnumber-maven-plugin</artifactId>
-				<version>1.0-beta-3</version> <executions> <execution>
-				<phase>validate</phase> <goals> <goal>create</goal> </goals>
-				</execution> </executions> <configuration> <doCheck>true</doCheck>
-				<doUpdate>true</doUpdate> </configuration> </plugin>
-			-->
-
-
 		</plugins>
 		<finalName>${project.artifactId}-${project.version}-r${buildNumber}</finalName>
 	</build>
