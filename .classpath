@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" output="target/classes" path="src/main/java"/>
-	<classpathentry excluding="**" kind="src" output="target/classes" path="src/main/resources"/>
 	<classpathentry kind="src" output="target/test-classes" path="src/test/java"/>
-	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="**/*.java" kind="src" path="src/main/resources"/>
+	<classpathentry kind="var" path="M2_REPO/com/google/guava/guava/r07/guava-r07.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-continuation/8.0.0.M1/jetty-continuation-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-continuation/8.0.0.M1/jetty-continuation-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-http/8.0.0.M1/jetty-http-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-http/8.0.0.M1/jetty-http-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-io/8.0.0.M1/jetty-io-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-io/8.0.0.M1/jetty-io-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-server/8.0.0.M1/jetty-server-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-server/8.0.0.M1/jetty-server-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-util/8.0.0.M1/jetty-util-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-util/8.0.0.M1/jetty-util-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/eclipse/jetty/jetty-websocket/8.0.0.M1/jetty-websocket-8.0.0.M1.jar" sourcepath="M2_REPO/org/eclipse/jetty/jetty-websocket/8.0.0.M1/jetty-websocket-8.0.0.M1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/net/java/dev/jna/jna/3.2.4/jna-3.2.4.jar" sourcepath="M2_REPO/net/java/dev/jna/jna/3.2.4/jna-3.2.4-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/junit/junit/4.8.1/junit-4.8.1.jar" sourcepath="M2_REPO/junit/junit/4.8.1/junit-4.8.1-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13.jar" sourcepath="M2_REPO/log4j/log4j/1.2.13/log4j-1.2.13-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5.jar" sourcepath="M2_REPO/org/mockito/mockito-all/1.8.5/mockito-all-1.8.5-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/osgi/org.osgi.core/4.0.0/org.osgi.core-4.0.0.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/restlet/jse/org.restlet/2.0.0/org.restlet-2.0.0.jar" sourcepath="M2_REPO/org/restlet/jse/org.restlet/2.0.0/org.restlet-2.0.0-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/restlet/jse/org.restlet.ext.simple/2.0.0/org.restlet.ext.simple-2.0.0.jar" sourcepath="M2_REPO/org/restlet/jse/org.restlet.ext.simple/2.0.0/org.restlet.ext.simple-2.0.0-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/mortbay/jetty/servlet-api/3.0.20100224/servlet-api-3.0.20100224.jar" sourcepath="M2_REPO/org/mortbay/jetty/servlet-api/3.0.20100224/servlet-api-3.0.20100224-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/simpleframework/simple/4.1.20/simple-4.1.20.jar" sourcepath="M2_REPO/org/simpleframework/simple/4.1.20/simple-4.1.20-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2.jar" sourcepath="M2_REPO/org/slf4j/slf4j-api/1.4.2/slf4j-api-1.4.2-sources.jar"/>
+	<classpathentry kind="var" path="M2_REPO/org/slf4j/slf4j-log4j12/1.4.2/slf4j-log4j12-1.4.2.jar" sourcepath="M2_REPO/org/slf4j/slf4j-log4j12/1.4.2/slf4j-log4j12-1.4.2-sources.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="/Users/bender/.m2/repository/org/springframework/spring-core/2.5.6/spring-core-2.5.6.jar" sourcepath="/Users/bender/.m2/repository/org/springframework/spring-core/2.5.6/spring-core-2.5.6-sources.jar">
+		<attributes>
+			<attribute name="maven.groupId" value="org.springframework"/>
+			<attribute name="maven.artifactId" value="spring-core"/>
+			<attribute name="maven.version" value="2.5.6"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/bender/.m2/repository/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6.jar" sourcepath="/Users/bender/.m2/repository/org/springframework/spring-beans/2.5.6/spring-beans-2.5.6-sources.jar">
+		<attributes>
+			<attribute name="maven.groupId" value="org.springframework"/>
+			<attribute name="maven.artifactId" value="spring-beans"/>
+			<attribute name="maven.version" value="2.5.6"/>
+			<attribute name="maven.scope" value="compile"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

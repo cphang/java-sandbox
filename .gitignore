@@ -1,2 +1,7 @@
 build/*
 target/*
+classes/*
+bin/*
+log/*
+reports/*
+*.log
