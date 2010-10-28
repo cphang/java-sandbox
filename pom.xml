@@ -54,6 +54,11 @@
 			<artifactId>jetty-websocket</artifactId>
 			<version>8.0.0.M1</version>
 		</dependency>
+		<dependency>
+            <groupId>name.pachler</groupId>
+            <artifactId>jpathwatch</artifactId>
+            <version>0.93-rc1</version>
+        </dependency>
 		<!-- Core utilities used by other modules. Define this if you use Spring 
 			Utility APIs (org.springframework.core.*/org.springframework.util.*) -->
 		<dependency>
