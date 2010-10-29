@@ -5,6 +5,6 @@ import name.pachler.nio.file.WatchEvent.Kind;
 
 public interface FileChangeEventFactory {
 
-  FileChangeEvent create(Kind<?> kind, Path context);
+  FileChangeEvent create(final Kind<?> kind, Path watchDir, Path context);
 
 }

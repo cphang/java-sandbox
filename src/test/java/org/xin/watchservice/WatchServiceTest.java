@@ -10,7 +10,7 @@ import name.pachler.nio.file.ClosedWatchServiceException;
 
 public class WatchServiceTest {
 
-  private static final String SOURCE_PATH = "/Users/bender/";
+  private static final String SOURCE_PATH = "/Users/bender/tmp/source";
 
   private final FileChangeListenerService service = new FileChangeListenerServiceImpl();
 
@@ -26,6 +26,10 @@ public class WatchServiceTest {
     service.stop();
   }
 
+  private void addSources() throws IOException {
+    service.add(SOURCE_PATH);
+  }
+
   @Test
   public void shouldMonitorGivenFolder() throws Exception {
     whenAnewFileCreated();
@@ -39,10 +43,6 @@ public class WatchServiceTest {
 
   private void whenAnewFileCreated() {
     throw new UnsupportedOperationException("not-yet-implemented.");
-  }
-
-  private void addSources() throws IOException {
-    service.add(SOURCE_PATH);
   }
 
   @Test

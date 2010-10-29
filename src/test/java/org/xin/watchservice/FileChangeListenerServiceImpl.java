@@ -3,9 +3,16 @@ package org.xin.watchservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import name.pachler.nio.file.ClosedWatchServiceException;
@@ -14,10 +21,8 @@ import name.pachler.nio.file.Path;
 import name.pachler.nio.file.Paths;
 import name.pachler.nio.file.StandardWatchEventKind;
 import name.pachler.nio.file.WatchEvent;
-import name.pachler.nio.file.WatchEvent.Kind;
 import name.pachler.nio.file.WatchKey;
 import name.pachler.nio.file.WatchService;
-import name.pachler.nio.file.impl.PathWatchEvent;
 
 public class FileChangeListenerServiceImpl implements FileChangeListenerService {
 
@@ -28,17 +33,21 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
 
   private final FileChangeEventFactoryImpl factory = new FileChangeEventFactoryImpl();
 
+  private final Map<WatchKey, Path> sourceByKey = new HashMap<WatchKey, Path>();
+
   @Override
   public void add(String sourcePath) throws IOException {
     sources.add(sourcePath);
-    regiterFileEvents(Paths.get(sourcePath));
+    registerFileEvents(Paths.get(sourcePath));
   }
 
-  private void regiterFileEvents(Path source) throws IOException {
+  private void registerFileEvents(Path source) throws IOException {
     log.debug("registering " + source + " to the service");
-    source.register(watchService, StandardWatchEventKind.ENTRY_CREATE,
+    final WatchKey key = source.register(watchService,
+        StandardWatchEventKind.ENTRY_CREATE,
         StandardWatchEventKind.ENTRY_DELETE,
         StandardWatchEventKind.ENTRY_MODIFY, StandardWatchEventKind.OVERFLOW);
+    sourceByKey.put(key, source);
   }
 
   @Override
@@ -46,9 +55,7 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
     log.debug("start monitoring all regitered folders");
 
     for (;;) {
-      for (final WatchEvent<?> watchEvent : pollEvents()) {
-        outputEvent(watchEvent);
-      }
+      pollEvents();
     }
   }
 
@@ -56,47 +63,82 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
       InterruptedException {
 
     final WatchKey signaledKey = watchService.take();
+    final Path watchDir = sourceByKey.get(signaledKey);
+
     final List<WatchEvent<?>> pollEvents = signaledKey.pollEvents();
-    signaledKey.reset();
-
     for (final WatchEvent<?> watchEvent : pollEvents) {
-      if (watchEvent instanceof PathWatchEvent) {
-        final Kind<Path> kind = ((PathWatchEvent) watchEvent).kind(); // StandardWatchEventKind.ENTRY_CREATE
-        log.debug(kind.type().getCanonicalName());
-
-        final Path filePath = ((PathWatchEvent) watchEvent).context();
-        log.debug(filePath.toString());
-      }
+      final FileChangeEvent event = factory.create(watchEvent.kind(), watchDir,
+          getContext(watchEvent));
+      fireEvent(event);
     }
+    signaledKey.reset();
 
     return pollEvents;
   }
 
-  private void outputEvent(WatchEvent<?> watchEvent) {
-    final FileChangeEvent event = factory.create(watchEvent.kind(),
-        getContext(watchEvent));
-
-    fireEvent(event);
-  }
+  private Set<EventObserver> eventObservers;
 
   private void fireEvent(FileChangeEvent event) {
-    final Path path = event.getPath();
-    final Kind<?> kind = event.kind();
+    // for (final EventObserver observer : eventObservers) {
+    // observer.notify(event);
+    // }
 
     String message = null;
-    if (kind.equals(StandardWatchEventKind.ENTRY_CREATE)) {
-      message = path.toString() + " created";
-    } else if (kind.equals((StandardWatchEventKind.ENTRY_DELETE))) {
-      message = path.toString() + " deleted";
-    } else if (kind.equals(StandardWatchEventKind.ENTRY_MODIFY)) {
-      message = path.toString() + " modified";
-    } else if (kind.equals((StandardWatchEventKind.OVERFLOW))) {
+    if (event.kind().equals(StandardWatchEventKind.ENTRY_CREATE)) {
+      message = event.absolutePath() + " created";
+      readFile(event);
+    } else if (event.kind().equals((StandardWatchEventKind.ENTRY_DELETE))) {
+      message = event.absolutePath() + " deleted";
+    } else if (event.kind().equals(StandardWatchEventKind.ENTRY_MODIFY)) {
+      message = event.absolutePath() + " modified";
+    } else if (event.kind().equals((StandardWatchEventKind.OVERFLOW))) {
       message = "OVERFLOW: more changes happened than we could retreive";
     } else {
       throw new RuntimeException("Unknown type of event.");
     }
     log.info(new StringBuilder(message).toString());
 
+  }
+
+  final boolean running = true;
+
+  private void readFile(FileChangeEvent event) {
+    InputStream in = null;
+    OutputStream out = null;
+    try {
+      in = new FileInputStream(event.absolutePath());
+      out = new FileOutputStream("/Users/bender/tmp/"
+          + event.getPath().toString() + ".copy");
+      int c;
+
+      while ((c = in.read()) != -1) {
+        out.write(c);
+      }
+
+    } catch (final FileNotFoundException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (final IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (final IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+      if (out != null) {
+        try {
+          out.close();
+        } catch (final IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
   }
 
   private Path getContext(WatchEvent<?> watchEvent) {

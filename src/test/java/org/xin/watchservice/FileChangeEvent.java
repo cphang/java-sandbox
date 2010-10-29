@@ -9,4 +9,5 @@ public interface FileChangeEvent {
 
   Kind<?> kind();
 
+  String absolutePath();
 }

@@ -1,5 +1,7 @@
 package org.xin.watchservice;
 
+import java.io.File;
+
 import name.pachler.nio.file.Path;
 import name.pachler.nio.file.WatchEvent.Kind;
 
@@ -7,9 +9,11 @@ public class FileChangeEventImpl implements FileChangeEvent {
 
   private final Kind<?> kind;
   private final Path path;
+  private final Path watchDir;
 
-  public FileChangeEventImpl(Kind<?> kind, Path context) {
+  public FileChangeEventImpl(Kind<?> kind, Path watchDir, Path context) {
     this.kind = kind;
+    this.watchDir = watchDir;
     this.path = context;
   }
 
@@ -31,6 +35,12 @@ public class FileChangeEventImpl implements FileChangeEvent {
   @Override
   public String toString() {
     return "FileChangeEventImpl [kind=" + kind + ", path=" + path + "]";
+  }
+
+  @Override
+  public String absolutePath() {
+    return new StringBuilder(watchDir.toString()).append(File.separatorChar).append(
+        path.toString()).toString();
   }
 
 }
