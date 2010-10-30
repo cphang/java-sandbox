@@ -1,14 +1,13 @@
 package org.xin.watchservice;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,7 +50,8 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
   }
 
   @Override
-  public void start() throws ClosedWatchServiceException, InterruptedException {
+  public void start() throws ClosedWatchServiceException, InterruptedException,
+      IOException {
     log.debug("start monitoring all regitered folders");
 
     for (;;) {
@@ -60,7 +60,7 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
   }
 
   private List<WatchEvent<?>> pollEvents() throws ClosedWatchServiceException,
-      InterruptedException {
+      InterruptedException, IOException {
 
     final WatchKey signaledKey = watchService.take();
     final Path watchDir = sourceByKey.get(signaledKey);
@@ -76,21 +76,16 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
     return pollEvents;
   }
 
-  private Set<EventObserver> eventObservers;
-
-  private void fireEvent(FileChangeEvent event) {
-    // for (final EventObserver observer : eventObservers) {
-    // observer.notify(event);
-    // }
-
+  private void fireEvent(FileChangeEvent event) throws IOException {
     String message = null;
     if (event.kind().equals(StandardWatchEventKind.ENTRY_CREATE)) {
       message = event.absolutePath() + " created";
-      readFile(event);
     } else if (event.kind().equals((StandardWatchEventKind.ENTRY_DELETE))) {
       message = event.absolutePath() + " deleted";
     } else if (event.kind().equals(StandardWatchEventKind.ENTRY_MODIFY)) {
       message = event.absolutePath() + " modified";
+      log.info(new StringBuilder(message).toString());
+      copyFile(event);
     } else if (event.kind().equals((StandardWatchEventKind.OVERFLOW))) {
       message = "OVERFLOW: more changes happened than we could retreive";
     } else {
@@ -102,43 +97,14 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
 
   final boolean running = true;
 
-  private void readFile(FileChangeEvent event) {
-    InputStream in = null;
-    OutputStream out = null;
-    try {
-      in = new FileInputStream(event.absolutePath());
-      out = new FileOutputStream("/Users/bender/tmp/"
-          + event.getPath().toString() + ".copy");
-      int c;
-
-      while ((c = in.read()) != -1) {
-        out.write(c);
-      }
-
-    } catch (final FileNotFoundException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (final IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } finally {
-      if (in != null) {
-        try {
-          in.close();
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-      if (out != null) {
-        try {
-          out.close();
-        } catch (final IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-      }
-    }
+  private void copyFile(FileChangeEvent event) throws IOException {
+    final String src = event.absolutePath();
+    final String to = "/Users/bender/tmp/" + event.getPath().toString()
+        + ".copy";
+    // FileUtils.copyFile(new File(src), new File(to));
+    final InputStream in = new URL("file:///" + src).openStream();
+    IOUtils.copy(in, new FileOutputStream(to));
+    log.info("copy finished");
   }
 
   private Path getContext(WatchEvent<?> watchEvent) {

@@ -10,7 +10,8 @@ public interface FileChangeListenerService {
 
   void remove(String otherSourcePath);
 
-  void start() throws ClosedWatchServiceException, InterruptedException;
+  void start() throws ClosedWatchServiceException, InterruptedException,
+      IOException;
 
   void stop();
 
