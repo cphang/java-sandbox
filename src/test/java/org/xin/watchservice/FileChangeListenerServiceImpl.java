@@ -26,12 +26,9 @@ import name.pachler.nio.file.WatchService;
 public class FileChangeListenerServiceImpl implements FileChangeListenerService {
 
   private final static Logger log = LoggerFactory.getLogger(FileChangeListenerServiceImpl.class);
-
   private final Set<String> sources = new HashSet<String>();
   private final WatchService watchService = FileSystems.getDefault().newWatchService();
-
   private final FileChangeEventFactoryImpl factory = new FileChangeEventFactoryImpl();
-
   private final Map<WatchKey, Path> sourceByKey = new HashMap<WatchKey, Path>();
 
   @Override
@@ -53,27 +50,29 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
   public void start() throws ClosedWatchServiceException, InterruptedException,
       IOException {
     log.debug("start monitoring all regitered folders");
-
     for (;;) {
       pollEvents();
     }
   }
 
-  private List<WatchEvent<?>> pollEvents() throws ClosedWatchServiceException,
+  private void pollEvents() throws ClosedWatchServiceException,
       InterruptedException, IOException {
-
     final WatchKey signaledKey = watchService.take();
-    final Path watchDir = sourceByKey.get(signaledKey);
-
-    final List<WatchEvent<?>> pollEvents = signaledKey.pollEvents();
-    for (final WatchEvent<?> watchEvent : pollEvents) {
-      final FileChangeEvent event = factory.create(watchEvent.kind(), watchDir,
-          getContext(watchEvent));
-      fireEvent(event);
-    }
+    notifyListeners(signaledKey, signaledKey.pollEvents());
     signaledKey.reset();
+  }
 
-    return pollEvents;
+  private void notifyListeners(WatchKey signaledKey, List<WatchEvent<?>> events)
+      throws IOException {
+    for (final WatchEvent<?> watchEvent : events) {
+      fireEvent(createEvent(watchEvent, signaledKey));
+    }
+  }
+
+  private FileChangeEvent createEvent(WatchEvent<?> watchEvent,
+      WatchKey signaledKey) {
+    return factory.create(watchEvent.kind(), sourceByKey.get(signaledKey),
+        getContext(watchEvent));
   }
 
   private void fireEvent(FileChangeEvent event) throws IOException {
@@ -101,7 +100,6 @@ public class FileChangeListenerServiceImpl implements FileChangeListenerService 
     final String src = event.absolutePath();
     final String to = "/Users/bender/tmp/" + event.getPath().toString()
         + ".copy";
-    // FileUtils.copyFile(new File(src), new File(to));
     final InputStream in = new URL("file:///" + src).openStream();
     IOUtils.copy(in, new FileOutputStream(to));
     log.info("copy finished");
