@@ -5,7 +5,7 @@ import name.pachler.nio.file.WatchEvent.Kind;
 
 public interface FileChangeEvent {
 
-  Path getPath();
+  Path fileName();
 
   Kind<?> kind();
 

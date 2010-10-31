@@ -3,31 +3,37 @@ package org.xin.watchservice;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.xin.restlet.ContactConstants;
+import org.xin.restlet.ContactService;
+import org.xin.restlet.impl.ContactServiceImpl;
+import org.xin.watchservice.impl.FileChangeListenerServiceImpl;
 
 import java.io.IOException;
-
-import name.pachler.nio.file.ClosedWatchServiceException;
 
 public class WatchServiceTest {
 
   private static final String SOURCE_PATH = "/Users/bender/tmp/source";
+  private final ContactService contactService = new ContactServiceImpl(
+      ContactConstants.CONTACT_SERVICE_PORT_NUMBER);
 
-  private final FileChangeListenerService service = new FileChangeListenerServiceImpl();
+  private FileChangeListenerService fileChangeListernerService;
 
   @Before
-  public void setUp() throws IOException, ClosedWatchServiceException,
-      InterruptedException {
-    addSources();
-    service.start();
+  public void setUp() throws Exception {
+    contactService.start();
+    fileChangeListernerService = new FileChangeListenerServiceImpl(
+        new ObserverImpl());
+    fileChangeListernerService.add(SOURCE_PATH);
+    fileChangeListernerService.start();
   }
 
   @After
   public void cleanUp() {
-    service.stop();
+    fileChangeListernerService.stop();
   }
 
   private void addSources() throws IOException {
-    service.add(SOURCE_PATH);
+    fileChangeListernerService.add(SOURCE_PATH);
   }
 
   @Test
@@ -36,9 +42,7 @@ public class WatchServiceTest {
     assertThatTheClientGetNotification();
   }
 
-  private void assertThatTheClientGetNotification() {
-    throw new UnsupportedOperationException("not-yet-implemented.");
-
+  private void assertThatTheClientGetNotification() throws Exception {
   }
 
   private void whenAnewFileCreated() {
